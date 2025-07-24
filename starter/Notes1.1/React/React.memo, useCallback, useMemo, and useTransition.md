@@ -116,6 +116,119 @@ useCallback(fn, deps)
 useMemo(() => fn, deps)
 ```
 
+Great! Let's dive into your question:
+
+> 🔍 **How is `useCallback(fn, deps)` the same as `useMemo(() => fn, deps)`?**
+
+---
+
+## 🧠 Concept
+
+| Hook          | What it memoizes     | Return Value               |
+| ------------- | -------------------- | -------------------------- |
+| `useCallback` | A **function**       | The same function instance |
+| `useMemo`     | A **computed value** | The return of the callback |
+
+👉 But:
+
+```js
+useCallback(fn, deps)
+// is just a shortcut for:
+useMemo(() => fn, deps)
+```
+
+Because `useMemo(() => fn, deps)` means:
+“Every time deps change, return this function reference.”
+
+---
+
+## ✅ Sample Example (Both Approaches Side by Side)
+
+Let's use both in a real example — a memoized event handler for a `<Child />` component.
+
+### 🔸 Using `useCallback`:
+
+```jsx
+const handleClick = useCallback(() => {
+  console.log("Clicked!");
+}, []);
+```
+
+### 🔸 Equivalent `useMemo` version:
+
+```jsx
+const handleClick = useMemo(() => {
+  return () => {
+    console.log("Clicked!");
+  };
+}, []);
+```
+
+🟡 Both will return a stable function reference across re-renders — unless dependencies change.
+
+---
+
+## ✅ Full Working Example: Compare Both in `React.memo`
+
+```jsx
+import React, { useState, useMemo, useCallback, memo } from "react";
+
+const Child = memo(({ onClick }) => {
+  console.log("Child rendered");
+  return <button onClick={onClick}>Click me</button>;
+});
+
+export default function App() {
+  const [count, setCount] = useState(0);
+
+  // Using useCallback (shortcut)
+  const cb1 = useCallback(() => {
+    console.log("Callback version");
+  }, []);
+
+  // Equivalent using useMemo
+  const cb2 = useMemo(() => {
+    return () => {
+      console.log("Memo version");
+    };
+  }, []);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(c => c + 1)}>Increment</button>
+
+      {/* Both components behave identically */}
+      <Child onClick={cb1} />
+      <Child onClick={cb2} />
+    </div>
+  );
+}
+```
+
+### 🧪 Behavior:
+
+* Both `cb1` and `cb2` are **stable functions**.
+* Neither `Child` component re-renders when `count` changes.
+* ✅ Because `React.memo` + stable function reference.
+
+---
+
+## 🧠 Summary
+
+| Code                            | Description                                            |
+| ------------------------------- | ------------------------------------------------------ |
+| `useCallback(fn, deps)`         | Returns a **memoized function**                        |
+| `useMemo(() => fn, deps)`       | Also returns a **memoized function**                   |
+| ✅ They're functionally the same | But `useCallback` is just cleaner syntax for functions |
+
+---
+
+## 💡 Tip:
+
+Use `useCallback` when you're memoizing **functions**.
+Use `useMemo` when you're memoizing **computed values** (e.g. filtered lists, derived data).
+
 ---
 
 ## 🔹 4. `useTransition` (🔄 Concurrent Rendering)
