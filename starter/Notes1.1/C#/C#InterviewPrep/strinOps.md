@@ -23,6 +23,44 @@ string input = "madam";
 bool isPalindrome = input.SequenceEqual(input.Reverse());
 Console.WriteLine(isPalindrome);  // Output: True
 ```
+### 🔹 2. **Check if a String is Palindrome**
+
+```csharp
+using System;
+
+public class Program
+{
+    public static bool IsPalindrome(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return false;
+
+        int left = 0;
+        int right = input.Length - 1;
+
+        while (left < right)
+        {
+            if (input[left] != input[right])
+                return false;
+
+            left++;
+            right--;
+        }
+
+        return true;
+    }
+
+    public static void Main()
+    {
+        Console.WriteLine(IsPalindrome("madam"));     // True
+        Console.WriteLine(IsPalindrome("racecar"));   // True
+        Console.WriteLine(IsPalindrome("hello"));     // False
+        Console.WriteLine(IsPalindrome("121"));       // True
+        Console.WriteLine(IsPalindrome(""));          // False
+    }
+}
+
+```
 
 ---
 

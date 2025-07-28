@@ -45,6 +45,19 @@ ROW_NUMBER() OVER (ORDER BY Salary DESC)
 
 > Like `RANK()`, but **no gaps** in the ranking sequence.
 
+```sql
+WITH RankedSalaries AS (
+    SELECT 
+        name,
+        salary,
+        DENSE_RANK() OVER (ORDER BY salary DESC) AS rank
+    FROM Employees
+)
+SELECT name, salary
+FROM RankedSalaries
+WHERE rank = 5;
+```
+
 ### 🔹 Example:
 
 | Name  | Salary | DENSE\_RANK |
